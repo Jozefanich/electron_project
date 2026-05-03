@@ -2,18 +2,93 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
     <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <meta
       http-equiv="X-Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
-    <title>Hello from Electron renderer!</title>
+    <title>IDZ_1</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="renderer.js" defer></script>
   </head>
-  <body>
-    <h1>Hello from Electron renderer!</h1>
+  <body id="mn">
+    <dialog id="remindError">
+      <b>You can`t do this</b>
+      <input type="button" value="OK" id="close_remind">
+    </dialog>
+
+    <dialog id="dialog">
+      <p id="dialog_text">Save last changes?</p>
+      <input type="button" value="YES" id="option_OK">
+      <input type="button" value="NO" id="option_NO">
+    </dialog>
+
+    <dialog id="creator">
+      <input type="number" name="columns" id="columns_count"><br>
+      <input type="number" name="rows" id="rows_count"><br>
+      <input type="button" value="create" id="createEmptyTable">
+      <input type="button" value="cancel" id="cancel">
+    </dialog>
+
+
+    <!-- <table id="control_panel">
+      <tbody>
+        <tr>
+          <td colspan="2">
+            <input type="file" name="csvfile" id="csvfile">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="button" name="loadLast" id="loadLast" value="Load last table">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="button" value="Add column" id="colAdd">
+          </td>
+          <td>
+            <input type="button" value="Remove column" id="colRm">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="button" value="Add row" id="rowAdd">
+          </td>
+          <td>
+            <input type="button" value="Remove row" id="rowRm">
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
+    <div id="main_menu">
+      <div id="select_file">
+        <!-- <input type="file" name="csvfile" id="csvfile"> -->
+        <input type="button" id="create" value="Create empty table" >
+        <input type="button" id="input" value="Select file">
+        <input type="button" id="loadLast" value="Load last table">
+      </div>
+      <div id="options">
+        <input type="button" value="Add column" id="colAdd">
+        <input type="button" value="Add row" id="rowAdd">
+
+        <input type="button" value="Remove column" id="colRm">
+        <input type="button" value="Remove row" id="rowRm">
+
+        <input type="button" value="Save" id="saveFile">
+      </div>
+    </div>
+    <div id="container"></div>
   </body>
 </html>

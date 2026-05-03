@@ -1,0 +1,42 @@
+#main_menu{
+    display:block;
+}
+#select_file{
+    align-items: center;
+    padding-bottom: 5px;
+    display:grid;
+    grid-template-columns: 4fr 4fr;
+}
+#create{
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+#options{
+    display: grid;
+    grid-template-columns: 4fr 4fr;
+}
+
+table, tr, td{
+    border: 1px dotted black;
+}
+
+#saveFile{
+    display:none;
+    grid-column-start: 1; 
+    grid-column-end: 3;
+}
+
+.msg{
+    border: 1px dotted red;
+    transition: transform 0.4s ease, opacity 0,4s ease;
+    position: absolute;
+    y:0;
+    transform: translateX(200px);
+    opacity: 1;
+}
+.hide{
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: 0.4s;
+}
+
