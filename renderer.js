@@ -105,14 +105,14 @@ function parseTableInfo(){ // парсить таблицю на json строк
 }
 
 
-window.eventer.onResponce((responce)=>{
-    document.body.insertAdjacentHTML('afterbegin', `<div class="msg">${responce}</div>`);
-    let msg = document.getElementsByClassName('msg')[0];
-    setTimeout(() => {
-        msg.classList.add('hide');
-        msg.addEventListener('transitionend',()=>{msg.remove();},{once:true});
-    },5000);
-});
+// window.eventer.onResponce((responce)=>{
+//     document.body.insertAdjacentHTML('afterbegin', `<div class="msg">${responce}</div>`);
+//     let msg = document.getElementsByClassName('msg')[0];
+//     setTimeout(() => {
+//         msg.classList.add('hide');
+//         msg.addEventListener('transitionend',()=>{msg.remove();},{once:true});
+//     },5000);
+// });
 
 
 document.getElementById('input').addEventListener('click',async()=>{
@@ -121,40 +121,25 @@ document.getElementById('input').addEventListener('click',async()=>{
             await parseTableInfo().then(data=>window.eventer.saveFile(data));
         }
     }
-    let doc = document.createElement('input');
-    doc.type='file';
-    doc.addEventListener('change', async(e)=>{    
-        let file = e.target.files[0];
-        if(file){
-            if(file.type != 'text/csv'){
-                remind('Incorect file format');
-                doc.value=null;
-                return;
-            }
-            container.innerHTML ="";
-            path = window.eventer.getPath(file); // отримання шляху до файлу
-            let result = await window.eventer.readFile(path); // отримання вмісту файлу
-            if(result['code']=='OK'){ // якщо все добре то вівід та збереження 
-                colCount=result['params']['colCount'];
-                rowCount=result['params']['rowCount'];
-                container.insertAdjacentHTML('beforeend',result['body']);
-                set_table_event();
-                localStorage.setItem('lastRequest', JSON.stringify(result));
-            }
-            else{ // якщо сталася помилка то повідомляє про це користувача
-                remind(result['body']);
-                colCount=0;
-                rowCount=0;
-                container.innerHTML="";
-            }
-        }
-        setTimeout(()=>{doc.remove()}, 5);
-    }, {once:true});
-    doc.click();
+    container.innerHTML = '';
+    let result = await window.eventer.readFile(); // отримання вмісту файлу
+    if(result['code']=='OK'){ // якщо все добре то вівід та збереження 
+        colCount=result['params']['colCount'];
+        rowCount=result['params']['rowCount'];
+        container.insertAdjacentHTML('beforeend',result['body']);
+        set_table_event();
+        localStorage.setItem('lastRequest', JSON.stringify(result));
+    }
+    else{ // якщо сталася помилка то повідомляє про це користувача
+        remind(result['body']);
+        colCount=0;
+        rowCount=0;
+        container.innerHTML="";
+    }
 })
 
 
-saveFile.onclick = ()=>{
+save.onclick = ()=>{
     parseTableInfo().then(data=>window.eventer.saveFile(data));
 }
 

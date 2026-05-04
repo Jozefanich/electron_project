@@ -1,6 +1,5 @@
-const { app, BrowserWindow, ipcMain, webUtils, dialog} = require('electron');
+const { app, BrowserWindow, ipcMain, dialog} = require('electron');
 const path = require('node:path');
-const { eventLoopUtilization } = require('node:perf_hooks');
 const fs = require('node:fs').promises;
 let win;
 
@@ -11,18 +10,32 @@ async function save_dialog(defaultName='table.csv'){
         buttonLabel: 'Save',
         filters: [
             {name: 'CSV files', extensions: ['csv']},
-            {name: 'Text files', extensions: ['txt']},
             {name: 'All files', extensions: ['*']}
         ]
     });
     return canceled ? null : filePath;
 }
 
+async function open_dialog(){
+    const {canceled, filePaths} = await dialog.showOpenDialog({
+        title: 'Select file',
+        buttonLabel: 'Open',
+        properties: ['openFile'],
+        filters: [
+            {name: 'CSV files', extensions: ['csv']},
+            {name: 'All files', extensions: ['*']}
+        ]
+    });
+    return canceled ? null : filePaths[0];
+}
+
+
+
+
 function write_file(path, text){
     return new Promise((resolve, reject)=>{
         try{
-            fs.writeFile(path, text);
-            resolve('OK');
+            fs.writeFile(path, text).then(resolve('OK'));
         }
         catch(err){
             console.log(err);
@@ -33,12 +46,13 @@ function write_file(path, text){
 
 
 
-ipcMain.handle('reader', async(event, fpath)=>{
-    if(fpath){
+ipcMain.handle('reader', async()=>{
+    let path = await open_dialog();
+    if(path){
         let rowCount=0;
         let colCount=0;
         try{
-            let text = await fs.readFile(fpath, "utf-8");
+            let text = await fs.readFile(path, "utf-8");
             let splitedText = text.split('\n');
             rowCount = splitedText.length;
             colCount = splitedText[0].split(';').length;
@@ -59,7 +73,7 @@ ipcMain.handle('reader', async(event, fpath)=>{
     }
 });
 
-ipcMain.on('save_file', async(event, text)=>{
+ipcMain.handle('save_file', async(event, text)=>{
     save_dialog()
     .then(path=>{
         if(path)write_file(path, text).then(result=>console.log(result));
@@ -83,33 +97,10 @@ ipcMain.on('creator', async(event,text, path)=>{
     catch(error){
         console.log(error);
     }
-    event.reply('request', 'success');
+    // event.reply('request', 'success');
 });
 
-// ipcMain.handle('writeFile', async ()=>{
-//     try{
-//         console.log(path.join(__dirname, 'data', 'index.csv'));
-//         await fs.writeFile('E:/electron_file.txt', "some text");
-//     }
-//     catch (error){
-//         console.log(`some error: ${error}`);
-//     }
-// });
-// ipcMain.handle('readFile', async ()=>{
-//     try{
-//         return await fs.readFile(path.join(__dirname, 'data','DataBase.csv'), 'utf-8');
-//     }
-//     catch(error){
-//         console.log(`error: ${error}`);
-//     }
-// });
-// ipcMain.handle('generate', async (body, list)=>{
-//     body['result']
-//     table = '<table id="result"><tbody>'
-//     for(item of list){
 
-//     }
-// });
 const createWindow = () => {
     win = new BrowserWindow({
         width: 800,
